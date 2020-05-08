@@ -1,40 +1,26 @@
 <?php
+
 $servername = "localhost";
-$username = "root";
-$password = "";
 $database = "lista_tareas";
 $port = "80";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $database, $port);
+$username = "root";
+$password = "";
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$dns = "mysql:host=$servername;dbname=$database;port=$port;";
+
+$connection = new PDO($dns, $username, $password);
+$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+$query = $connection->prepare('SELECT * FROM tareas');
+$query->execute();
+
+$tareas = array();
+
+while($row = $query->fetch(PDO::FETCH_ASSOC)) {
+  var_dump($row);
 }
-echo "Connected successfully <br>";
 
-$sql = "SELECT * FROM tareas WHERE completada='NO'";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-  echo "<br>TAREAS NO COMPLETADAS: <br>";
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    echo "<br>";
-    echo "Titulo: " . $row["titulo"];
-    echo "<br>";
-    echo "Descripcion: " . $row["descripcion"];
-    echo "<br>";
-    echo "Fecha limite: " . $row["fecha_limite"];
-    echo "<br>";
-    var_dump($row);
-    echo "<br>";
-    //var_dump($row);
-    //echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
-  }
-} else {
-  echo "0 results";
-}
-$conn->close();?>
+?>
 
